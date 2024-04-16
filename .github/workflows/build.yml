@@ -1,0 +1,30 @@
+name: Compile Plugin
+
+# The workflow will run on every push and pull request to the repository
+on:
+  workflow_dispatch:
+  # (optional) Run workflow when pushing on master/main
+  push:
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  compile-plugin:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout BZFlag
+      run: git clone -b 2.4 https://github.com/BZFlag-Dev/bzflag.git bzflag
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        path: ./bzflag/plugins/autoTeamBalance
+    - name: Prepare Packages
+      run: sudo apt-get update; sudo apt-get install -y build-essential libglu1-mesa-dev freeglut3-dev mesa-common-dev libsdl2-dev libc-ares-dev libcurl4-gnutls-dev zlib1g-dev; sudo apt-get clean
+    - name: Build BZFlag Plugin
+      run: cd bzflag; ./autogen.sh; ./configure --disable-client --disable-bzadmin --enable-custom-plugins=autoTeamBalance; make; sudo make install
+    - name: Archive BZFS Plugins
+      uses: actions/upload-artifact@v4
+      with:
+        name: autoTeamBalance
+        path: /usr/local/lib/bzflag/autoTeamBalance.*
