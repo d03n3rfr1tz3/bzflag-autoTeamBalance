@@ -19,6 +19,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         path: ./bzflag/plugins/autoTeamBalance
+    - name: Load Plugin Submodules
+      run: cd bzflag/plugins/autoTeamBalance; git submodule update --init; cd ../../..
     - name: Prepare Packages
       run: sudo apt-get update; sudo apt-get install -y build-essential libglu1-mesa-dev freeglut3-dev mesa-common-dev libsdl2-dev libc-ares-dev libcurl4-gnutls-dev zlib1g-dev; sudo apt-get clean
     - name: Build BZFlag Plugin
